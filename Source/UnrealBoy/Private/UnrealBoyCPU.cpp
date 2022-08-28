@@ -11,12 +11,6 @@
 
 namespace UnrealBoy
 {
-	uint8 INTR_VBLANK = 0x1;	
-	uint8 INTR_LCDC = 0x2;	
-	uint8 INTR_TIMER = 0x4;	
-	uint8 INTR_SERIAL = 0x8;	
-	uint8 INTR_HIGHTOLOW = 0x10;
-
 	using FInterruptRegInfo = TTuple<uint8, uint16>;
 	TArray<FInterruptRegInfo> InterruptVector {
 		FInterruptRegInfo {INTR_VBLANK, UnrealBoyAddressNames::InterruptVBlank},
@@ -54,6 +48,7 @@ FUnrealBoyCPU::FUnrealBoyCPU(FUnrealBoyMotherboard& InMotherboard)
 	, bStuck(false)
 	, bStopped(false)
 {
+	FileHandle = TUniquePtr<FArchive>(IFileManager::Get().CreateFileWriter(TEXT("E:\\workroom\\gameboy\\rboy\\foo2.txt")));
 }
 
 FUnrealBoyCPU::~FUnrealBoyCPU()
@@ -94,12 +89,22 @@ uint8 FUnrealBoyCPU::Tick()
 uint8 FUnrealBoyCPU::FetchAndExecute()
 {
 	uint16 Opcode = Motherboard.ReadMemory(PC);
+	uint8 PCExtra = 0;
 	if (Opcode == 0xCB)	// Extension code
 	{
-		Opcode = Motherboard.ReadMemory(++PC);
+		Opcode = Motherboard.ReadMemory(PC + 1);
 		Opcode |= 0x100;
+		PCExtra = 1;
 	}
 
+	// if (FileHandle)
+	// {
+	// 	//FFileHelper::SaveStringToFile()
+	// 	FString Str = FString::Format(TEXT("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}\n"), {Opcode, PC + PCExtra, SP, A, F, B, C, D, E, HL >> 8, HL & 0xFF});
+	// 	FTCHARToUTF8 UTF8String(GetData(Str), Str.Len());
+	// 	FileHandle->Serialize((UTF8CHAR*)UTF8String.Get(), UTF8String.Length() * sizeof(UTF8CHAR));
+	// }
+	
 	return Opcodes.ExecuteOpcode(Opcode);
 }
 
@@ -157,6 +162,11 @@ bool FUnrealBoyCPU::HandleInterrupt(uint8 Flag, uint16 Address)
 	return false;
 }
 
+void FUnrealBoyCPU::SetInterruptFlag(uint8 Flag)
+{
+	InterruptFlagRegister |= Flag;
+}
+
 void FUnrealBoyCPU::SetRegisterBC(uint16 X)
 {
 	B = X >> 8;
@@ -197,6 +207,11 @@ bool FUnrealBoyCPU::GetFlagNC() const
 bool FUnrealBoyCPU::GetFlagNZ() const
 {
 	return (F & (1 << FLAG_Z)) == 0;
+}
+
+bool FUnrealBoyCPU::IsHalted() const
+{
+	return bHalted;
 }
 
 FString FUnrealBoyCPU::DumpState(const FString& InLabel)

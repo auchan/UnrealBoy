@@ -20,6 +20,12 @@ public:
 
 	/** Whether this emulator is setup properly */
 	bool IsValid() const;
+	
+	/** Get screen buffer */
+	const TArray<FColor>& GetScreenBuffer() const;
+	
+	/** Get tile cache */
+	const TArray<FColor>& GetTileMap1Buffer() const;
 
 protected:
 	bool LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const;

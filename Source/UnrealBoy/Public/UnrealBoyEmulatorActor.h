@@ -25,9 +25,28 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(CallInEditor)
+	void CaptureScreen();
+	
+	void CopyImageBufferToTexture(uint32 ImageWidth, uint32 ImageHeight, const TArray<FColor>& Buffer, UTexture2D*& InScreenTexture);
+
 private:
 	UPROPERTY(EditAnywhere)
-	FString CartridgeFilePath;
+	FFilePath CartridgeFilePath;
+
+	UPROPERTY(EditAnywhere)
+	AActor* ScreenDisplayActor;
+	
+	UPROPERTY(EditAnywhere, Transient)
+	UTexture2D* ScreenTexture;
+	
+	UPROPERTY(EditAnywhere, Transient)
+	UTexture2D* TileMap1Texture;
+	
+	UPROPERTY(EditAnywhere, Transient)
+	UTexture2D* TileMap2Texture;
+
+	float AccumulatedTime = 0.f;
 	
 	FUnrealBoyEmulator Emulator;
 };

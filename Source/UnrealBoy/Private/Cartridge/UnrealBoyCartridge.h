@@ -14,5 +14,8 @@ class FUnrealBoyCartridge
 public:
 	static TSharedPtr<FUnrealBoyBaseMBC> LoadROM(const TArray<uint8>& InROMData);
 
-	static TSharedPtr<FUnrealBoyBaseMBC> CreateMBC(const int32 CartridgeType);
+	static TSharedPtr<FUnrealBoyBaseMBC> CreateMBC(const int32 CartridgeType, const TArray<uint8>& InROMData);
+
+	inline static uint16 ROM_BANK_SIZE = 16 * 1024; // 16KB 
+	inline static uint16 RAM_BANK_SIZE = 8 * 1024; // 8KB 
 };

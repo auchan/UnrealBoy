@@ -5,17 +5,8 @@
 #include "CoreMinimal.h"
 #include "UnrealBoyTypes.h"
 
-namespace UnrealBoyAddressNames
-{
-	constexpr uint16 InterruptVBlank = 0x0040;
-	constexpr uint16 InterruptLCDC = 0x0048;
-	constexpr uint16 InterruptTimer = 0x0050;
-	constexpr uint16 InterruptSerial = 0x0058;
-	constexpr uint16 InterruptHighToLow = 0x0060;
-	
-	constexpr uint16 InterruptFlagRegister = 0xFF0F;
-	constexpr uint16 InterruptEnableRegister = 0xFFFF;
-}
+#define UNREALBOY_GET_MEMORY_REF(AddressName) Motherboard.GetMemoryRef(UnrealBoyAddressNames::AddressName)
+#define UNREALBOY_GET_MEMORY_RANGE_VIEW(BeginAddressName, EndAddressName) Motherboard.GetMemoryRangeView(UnrealBoyAddressNames::BeginAddressName, UnrealBoyAddressNames::EndAddressName)
 
 /**
  * Motherboard
@@ -42,7 +33,18 @@ public:
 	/** Get memory reference, used to map variable to memory block */
 	uint8& GetMemoryRef(uint16 Address);
 
+	/** Get memory range view */
+	TArrayView<uint8> GetMemoryRangeView(uint16 BeginAddress, uint16 EndAddress);
+
+	/** Get screen buffer */
+	const TArray<FColor>& GetScreenBuffer() const;
+	
+	/** Get Tile Cache */
+	const TArray<FColor>& GetTileMap1Buffer() const;
+
 	bool Tick();
+
+	void TransferDMA(uint8 SrcAddress);
 
 	FString DumpState(const FString& InLabel) const;
 
@@ -57,6 +59,8 @@ private:
 	TSharedPtr<class FUnrealBoyCPU> CPU;
 	TSharedPtr<class FUnrealBoyBootRom> BotRoom;
 	TSharedPtr<class FUnrealBoyBaseMBC> MBC;
+	TSharedPtr<class FUnrealBoyLCD> LCD;
+	TSharedPtr<class FUnrealBoyTimer> Timer;
 
 	// states
 	bool bBootRomEnabled;

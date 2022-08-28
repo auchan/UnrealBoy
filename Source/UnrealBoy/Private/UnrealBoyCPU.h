@@ -45,6 +45,9 @@ public:
 	/** Handle interrupt by jump to specified address */
 	bool HandleInterrupt(uint8 Flag, uint16 Address);
 
+	/** Set interrupt flag to register */
+	void SetInterruptFlag(uint8 Flag);
+
 	void SetRegisterBC(uint16 X);
 	void SetRegisterDE(uint16 X);
 	bool GetFlagC() const;
@@ -53,6 +56,7 @@ public:
 	bool GetFlagZ() const;
 	bool GetFlagNC() const;
 	bool GetFlagNZ() const;
+	bool IsHalted() const;
 
 	FString DumpState(const FString& InLabel);
 
@@ -83,4 +87,6 @@ private:
 	bool bHalted;
 	bool bStuck;
 	bool bStopped;
+
+	TUniquePtr<FArchive> FileHandle = nullptr;
 };

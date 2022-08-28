@@ -15,23 +15,6 @@ int32 FUnrealBoyEmulator::Start(const FString& InROMFilePath)
 	}
 	
 	Motherboard = MakeShareable(new FUnrealBoyMotherboard(ROMData));
-
-	uint16 Address = 0;
-	// // LD BC,d16
-	// Motherboard->WriteMemory(Address++, 0x01);
-	// Motherboard->WriteMemory(Address++, 0x02);
-	// Motherboard->WriteMemory(Address++, 0x03);
-	//
-	// // LD A,B
-	// Motherboard->WriteMemory(Address++, 0x78);
-
-	UE_LOG(LogUnrealBoy, Display, TEXT("State0 - %s"), *Motherboard->DumpState(""));
-	for (int32 Count = 1;  Count <= 10; Count++)
-	{
-		Motherboard->Tick();
-		UE_LOG(LogUnrealBoy, Display, TEXT("State%d - %s"), Count, *Motherboard->DumpState(""));
-	}
-
 	return 0;
 }
 
@@ -57,6 +40,17 @@ int32 FUnrealBoyEmulator::Stop()
 bool FUnrealBoyEmulator::IsValid() const
 {
 	return Motherboard.IsValid();
+}
+
+const TArray<FColor>& FUnrealBoyEmulator::GetScreenBuffer() const
+{
+	check(IsValid());
+	return Motherboard->GetScreenBuffer();
+}
+
+const TArray<FColor>& FUnrealBoyEmulator::GetTileMap1Buffer() const
+{
+	return Motherboard->GetTileMap1Buffer();
 }
 
 bool FUnrealBoyEmulator::LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const

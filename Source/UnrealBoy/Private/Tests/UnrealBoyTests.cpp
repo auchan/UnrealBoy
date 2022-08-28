@@ -1,12 +1,11 @@
-﻿// License: See LICENSE.txt file
+﻿// License: See LICENSE.md file
 
-
-#include "UnrealBoyUnitTestCommandlet.h"
+#include "UnrealBoyTests.h"
 
 #include "UnrealBoyEmulator.h"
 #include "Interfaces/IPluginManager.h"
 
-int32 UUnrealBoyUnitTestCommandlet::Main(const FString& Params)
+bool FUnrealBoyCPUInstructionTest::RunTest(const FString& Parameters)
 {
 	const FString PluginDir = IPluginManager::Get().FindPlugin(TEXT("UnrealBoy"))->GetBaseDir();
 	const FString TestROMFilePath = FPaths::Combine(PluginDir, TEXT("Resources/ROMs/cpu_instrs.gb"));
@@ -19,5 +18,6 @@ int32 UUnrealBoyUnitTestCommandlet::Main(const FString& Params)
 		Emulator.Tick(0);
 	}
 	Emulator.Stop();
-	return 0;
+
+	return true;
 }

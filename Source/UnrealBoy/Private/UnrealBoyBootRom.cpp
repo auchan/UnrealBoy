@@ -18,7 +18,7 @@ FUnrealBoyBootRom::FUnrealBoyBootRom(FUnrealBoyMotherboard& InMotherboard, const
 			{0x01, 0xFE},
 			{0x02, 0xFF},
 
-			//Inject jump to 0xFC00
+			//Inject jump to 0x00FC
 			{0x03, 0xC3},
 			{0x04, 0xFC},
 			{0x05, 0x00},
