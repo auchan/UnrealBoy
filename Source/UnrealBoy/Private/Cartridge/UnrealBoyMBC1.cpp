@@ -31,7 +31,7 @@ uint8 FUnrealBoyMBC1::ReadMemory(uint16 Address)
 	}
 	else
 	{
-		UE_LOG(LogUnrealBoy, Error, TEXT("Invalid reading address: %04X"), Address);
+		LogReadFromInvalidAddress(Address);
 		return 0xFF;
 	}
 }
@@ -64,13 +64,20 @@ void FUnrealBoyMBC1::WriteMemory(uint16 Address, uint8 Value)
 	{
 		BankingMode = Value & 0b1;
 	}
-	else if (0xA000 <= Address && Address < 0xC000 && bRamBankEnabled) // Write to RAM banks
+	else if (0xA000 <= Address && Address < 0xC000) // Write to RAM banks
 	{
-		const uint8 RamBankNumber = (BankingMode == 1 ? BankSelectRegister2 : 0) % RamBankCount;
-		WriteToRamBank(RamBankNumber, Address, 0xA000, Value);
+		if(bRamBankEnabled)
+		{
+			const uint8 RamBankNumber = (BankingMode == 1 ? BankSelectRegister2 : 0) % RamBankCount;
+			WriteToRamBank(RamBankNumber, Address, 0xA000, Value);	
+		}
+		else
+		{
+			LogWriteToDisabledRAMAddress(Address);
+		}
 	}
 	else
 	{
-		UE_LOG(LogUnrealBoy, Error, TEXT("Invalid writing address: %04X"), Address);
+		LogWriteToInvalidAddress(Address);
 	}
 }

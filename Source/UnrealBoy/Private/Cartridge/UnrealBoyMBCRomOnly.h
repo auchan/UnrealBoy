@@ -12,4 +12,5 @@ class FUnrealBoyMBCRomOnly : public FUnrealBoyBaseMBC
 {
 public:
 	
+	virtual void WriteMemory(uint16 Address, uint8 Value) override;
 };

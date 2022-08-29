@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealBoyBaseMBC.h"
 
 /**
- * 
+ * MBC type 2:
+ * Max 256 KiB ROM and 512x4 bits RAM
  */
-class UNREALBOY_API UnrealBoyMBC2
+class FUnrealBoyMBC2 : public FUnrealBoyBaseMBC
 {
 public:
-	UnrealBoyMBC2();
-	~UnrealBoyMBC2();
+	
+	virtual uint8 ReadMemory(uint16 Address) override;
+
+	virtual void WriteMemory(uint16 Address, uint8 Value) override;
 };

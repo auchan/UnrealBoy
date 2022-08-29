@@ -1,17 +1,20 @@
 # Unreal Boy
 
-Yet another game boy emulator written in unreal c++. Currently only accomplish very basic features:
+Yet another game boy emulator written in Unreal C++. Currently only accomplish very basic features:
 
 - ✅ Motherboard
 - ✅ CPU
 - ✅ LCD
 - ✅ Timer
 - Cartridge
-  - ❌ MBC ROM Only
+  - ✅ MBC ROM Only
   - ✅ MBC 1
-  - ❌ MBC 2
+  - ❓  MBC 2 (Need test)
+  - ✅ MBC 3
+  - ❌ MBC 5
 - ❌ Input
 - ❌ Audio
+- ❌ RTC
 
 ## Installation
 
