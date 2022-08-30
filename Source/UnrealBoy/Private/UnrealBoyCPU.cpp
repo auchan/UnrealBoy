@@ -9,6 +9,8 @@
 #include "UnrealBoyLog.h"
 #include "UnrealBoyMotherboard.h"
 
+#define UNREALBOY_DEBUG_CPU 0
+
 namespace UnrealBoy
 {
 	using FInterruptRegInfo = TTuple<uint8, uint16>;
@@ -48,7 +50,9 @@ FUnrealBoyCPU::FUnrealBoyCPU(FUnrealBoyMotherboard& InMotherboard)
 	, bStuck(false)
 	, bStopped(false)
 {
-	FileHandle = TUniquePtr<FArchive>(IFileManager::Get().CreateFileWriter(TEXT("E:\\workroom\\gameboy\\rboy\\foo2.txt")));
+#if UNREALBOY_DEBUG_CPU
+	FileHandle = TUniquePtr<FArchive>(IFileManager::Get().CreateFileWriter(*(FPaths::ProjectSavedDir() / TEXT("UnrealBoy_CPU_Dump.txt")), FILEWRITE_AllowRead));
+#endif
 }
 
 FUnrealBoyCPU::~FUnrealBoyCPU()
@@ -97,13 +101,15 @@ uint8 FUnrealBoyCPU::FetchAndExecute()
 		PCExtra = 1;
 	}
 
-	// if (FileHandle)
-	// {
-	// 	//FFileHelper::SaveStringToFile()
-	// 	FString Str = FString::Format(TEXT("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}\n"), {Opcode, PC + PCExtra, SP, A, F, B, C, D, E, HL >> 8, HL & 0xFF});
-	// 	FTCHARToUTF8 UTF8String(GetData(Str), Str.Len());
-	// 	FileHandle->Serialize((UTF8CHAR*)UTF8String.Get(), UTF8String.Length() * sizeof(UTF8CHAR));
-	// }
+#if UNREALBOY_DEBUG_CPU
+	if (FileHandle)
+	{
+		uint8 Operand1 = Motherboard.ReadMemory(PC + PCExtra + 1);
+		FString Str = FString::Format(TEXT("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}\n"), {Opcode, PC + PCExtra, SP, A, F, B, C, D, E, HL >> 8, HL & 0xFF, Operand1});
+		FTCHARToUTF8 UTF8String(GetData(Str), Str.Len());
+		FileHandle->Serialize((UTF8CHAR*)UTF8String.Get(), UTF8String.Length() * sizeof(UTF8CHAR));
+	}
+#endif
 	
 	return Opcodes.ExecuteOpcode(Opcode);
 }

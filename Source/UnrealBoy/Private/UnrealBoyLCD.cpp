@@ -192,6 +192,11 @@ const TArray<FColor>& FUnrealBoyLCD::GetTileMap1Buffer() const
 	return TileMap1Buffer;
 }
 
+void FUnrealBoyLCD::RequestClearCache()
+{
+	bNeedClearCache = true;
+}
+
 /*****************************************************************
  * LCDC Register
 *****************************************************************/
@@ -308,6 +313,16 @@ void FUnrealBoyPPU::ClearScreen()
 
 void FUnrealBoyPPU::UpdateCache()
 {
+	if (LCD.bNeedClearCache)
+	{
+		LCD.ChangedTileAddresses.Reset();
+		for (uint16 Address = 0x8000; Address < 0x9800; Address += 16)
+		{
+			LCD.ChangedTileAddresses.Add(Address);
+		}
+		LCD.bNeedClearCache = false;
+	}
+	
 	const uint32 NumCols = 8;
 	for (const uint16 Address : LCD.ChangedTileAddresses)
 	{

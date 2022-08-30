@@ -61,6 +61,7 @@ private:
 	TSharedPtr<class FUnrealBoyBaseMBC> MBC;
 	TSharedPtr<class FUnrealBoyLCD> LCD;
 	TSharedPtr<class FUnrealBoyTimer> Timer;
+	TSharedPtr<class FUnrealBoyJoyPad> JoyPad;
 
 	// states
 	bool bBootRomEnabled;

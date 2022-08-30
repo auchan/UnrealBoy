@@ -39,6 +39,8 @@ namespace UnrealBoyAddressNames
 	constexpr uint16 InterruptFlagRegister = 0xFF0F;
 	constexpr uint16 InterruptEnableRegister = 0xFFFF;
 
+	constexpr uint16 JoyPad = 0xFF00; // Joy Pad Register
+
 	constexpr uint16 TimerDIV = 0xFF04; // Divider Register
 	constexpr uint16 TIMA = 0xFF05; // Timer Counter
 	constexpr uint16 TMA = 0xFF06; // Timer Modulo

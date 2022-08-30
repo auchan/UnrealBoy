@@ -50,7 +50,7 @@ class FUnrealBoyLCD
 public:
 	FUnrealBoyLCD(FUnrealBoyMotherboard& InMotherboard);
 	~FUnrealBoyLCD();
-
+	
 	/** Set the value of LCD control register */
 	void SetLCDC(uint8 Value);
 
@@ -72,6 +72,8 @@ public:
 	const TArray<FColor>& GetScreenBuffer() const;
 	
 	const TArray<FColor>& GetTileMap1Buffer() const;
+	
+	void RequestClearCache();
 
 	static uint32 NUM_ROWS;
 	static uint32 NUM_COLS;
@@ -143,6 +145,7 @@ private:
 	uint8 MaxLY;
 	uint8 LYWindow;
 	TSet<uint16> ChangedTileAddresses;
+	bool bNeedClearCache;
 
 	/** Color caches */
 	TArray<FColor> TileCache;

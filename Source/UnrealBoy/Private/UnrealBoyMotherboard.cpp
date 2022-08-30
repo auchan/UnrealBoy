@@ -5,6 +5,7 @@
 
 #include "UnrealBoyCPU.h"
 #include "UnrealBoyBootRom.h"
+#include "UnrealBoyJoypad.h"
 #include "UnrealBoyLCD.h"
 #include "UnrealBoyTimer.h"
 #include "Cartridge/UnrealBoyBaseMBC.h"
@@ -22,6 +23,7 @@ FUnrealBoyMotherboard::FUnrealBoyMotherboard(const TArray<uint8>& InROMData)
 	check(MBC);
 	LCD = MakeShareable(new FUnrealBoyLCD(*this));
 	Timer = MakeShareable(new FUnrealBoyTimer(*this));
+	JoyPad = MakeShareable(new FUnrealBoyJoyPad(*this));
 
 	InitializeMemoryDelegates();
 }
@@ -84,7 +86,11 @@ void FUnrealBoyMotherboard::WriteMemory(uint16 Address, uint8 Value)
 	}
 	else if (0xFF00 <= Address && Address < 0xFF4C) // I/O ports
 	{
-		if (0xFF04 <= Address && Address < 0xFF08) // Timer
+		if (0xFF00 == Address)
+		{
+			JoyPad->WriteMemory(Address, Value);
+		}
+		else if (0xFF04 <= Address && Address < 0xFF08) // Timer
 		{
 			Timer->WriteMemory(Address, Value);
 		}
@@ -102,6 +108,15 @@ void FUnrealBoyMotherboard::WriteMemory(uint16 Address, uint8 Value)
 		}
 		else
 		{
+			if (UnrealBoyAddressNames::LCD_BGP <= Address && Address <= UnrealBoyAddressNames::LCD_OBP1)
+			{
+				if (MemoryBlock[Address] != Value)
+				{
+					// Color palette changed, need clear cache
+					LCD->RequestClearCache();
+				}
+			}
+			
 			MemoryBlock[Address] = Value;	
 		}
 	}
