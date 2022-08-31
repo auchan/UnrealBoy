@@ -171,6 +171,7 @@ bool FUnrealBoyLCD::ProcessingFrame()
 	const bool bKeepProcessing = !bFrameDone;
 	if (bFrameDone)
 	{
+		OnFrameDone.Broadcast();
 		// Clear vblank flag for next iteration
 		bFrameDone = false;
 	}
@@ -363,9 +364,9 @@ void FUnrealBoyPPU::ScanLineBGAndWindow()
 {
 	uint8 BX = LCD.SCX; // Background X
 	uint8 BY = LCD.SCY; // Background Y
-	uint8 WX = LCD.WX; // Window X
+	uint8 WX = LCD.WX - 7; // Window X
 	uint8 WY = LCD.WY; // Window Y
-	uint8 LY = LCD.LY;
+	uint8 LY = LCD.LY; // Scan line Y coordinate
 
 	uint16 BackgroundMapOffset = LCD.LCDC.GetBackgroundMapSelect() ? 0x1C00 : 0x1800;
 	uint16 WindowsMapOffset = LCD.LCDC.GetWindowMapSelect() ? 0x1C00 : 0x1800;

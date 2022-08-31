@@ -59,3 +59,21 @@ namespace UnrealBoyAddressNames
 	constexpr uint16 LCD_WY = 0xFF4A; // Window Y position
 	constexpr uint16 LCD_WX = 0xFF4B; // Window X position
 }
+
+enum class EUnrealBoyKeyType : uint8
+{
+	Right,
+	Left,
+	Up,
+	Down,
+	A,
+	B,
+	Select,
+	Start,
+};
+
+enum class EUnrealBoyKeyEvent : uint8
+{
+	Pressed,
+	Released ,
+};

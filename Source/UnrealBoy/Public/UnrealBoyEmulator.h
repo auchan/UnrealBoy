@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealBoyTypes.h"
 
 class FUnrealBoyMotherboard;
 
@@ -27,6 +28,11 @@ public:
 	/** Get tile cache */
 	const TArray<FColor>& GetTileMap1Buffer() const;
 
+	/** Get on frame done delegate */
+	FSimpleMulticastDelegate& GetOnFrameDoneDelegate() const;
+
+	/** On key event */
+	void OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent);
 protected:
 	bool LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const;
 	

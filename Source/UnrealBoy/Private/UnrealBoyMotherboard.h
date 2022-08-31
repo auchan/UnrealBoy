@@ -41,6 +41,12 @@ public:
 	
 	/** Get Tile Cache */
 	const TArray<FColor>& GetTileMap1Buffer() const;
+	
+	/** Get on frame done delegate */
+	FSimpleMulticastDelegate& GetOnFrameDoneDelegate() const;
+
+	/** On key event */
+	void OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent);
 
 	bool Tick();
 

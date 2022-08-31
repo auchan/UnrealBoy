@@ -53,6 +53,20 @@ const TArray<FColor>& FUnrealBoyEmulator::GetTileMap1Buffer() const
 	return Motherboard->GetTileMap1Buffer();
 }
 
+FSimpleMulticastDelegate& FUnrealBoyEmulator::GetOnFrameDoneDelegate() const
+{
+	return Motherboard->GetOnFrameDoneDelegate();
+}
+
+void FUnrealBoyEmulator::OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent)
+{
+	if (!IsValid())
+	{
+		return;
+	}
+	Motherboard->OnKeyEvent(KeyType, KeyEvent);
+}
+
 bool FUnrealBoyEmulator::LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const
 {
 	// Ensure file exist

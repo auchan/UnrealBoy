@@ -11,6 +11,7 @@
 // Sets default values
 AUnrealBoyEmulatorActor::AUnrealBoyEmulatorActor()
 {
+	RootComponent = CreateDefaultSubobject<USceneComponent>(USceneComponent::GetDefaultSceneRootVariableName());
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -19,17 +20,47 @@ AUnrealBoyEmulatorActor::AUnrealBoyEmulatorActor()
 void AUnrealBoyEmulatorActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (InputComponent)
+	{
+		// Key press
+		InputComponent->BindAction(TEXT("Up"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnUpKeyPressed);
+		InputComponent->BindAction(TEXT("Right"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnRightKeyPressed);
+		InputComponent->BindAction(TEXT("Down"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnDownKeyPressed);
+		InputComponent->BindAction(TEXT("Left"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnLeftKeyPressed);
+		InputComponent->BindAction(TEXT("Function_A"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnFunctionAPressed);
+		InputComponent->BindAction(TEXT("Function_B"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnFunctionBPressed);
+		InputComponent->BindAction(TEXT("Select"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnSelectKeyPressed);
+		InputComponent->BindAction(TEXT("Start"), IE_Pressed, this, &AUnrealBoyEmulatorActor::OnStartKeyPressed);
+
+		// Key release
+		InputComponent->BindAction(TEXT("Up"), IE_Released, this, &AUnrealBoyEmulatorActor::OnUpKeyReleased);
+		InputComponent->BindAction(TEXT("Right"), IE_Released, this, &AUnrealBoyEmulatorActor::OnRightKeyReleased);
+		InputComponent->BindAction(TEXT("Down"), IE_Released, this, &AUnrealBoyEmulatorActor::OnDownKeyReleased);
+		InputComponent->BindAction(TEXT("Left"), IE_Released, this, &AUnrealBoyEmulatorActor::OnLeftKeyReleased);
+		InputComponent->BindAction(TEXT("Function_A"), IE_Released, this, &AUnrealBoyEmulatorActor::OnFunctionAReleased);
+		InputComponent->BindAction(TEXT("Function_B"), IE_Released, this, &AUnrealBoyEmulatorActor::OnFunctionBReleased);
+		InputComponent->BindAction(TEXT("Select"), IE_Released, this, &AUnrealBoyEmulatorActor::OnSelectKeyReleased);
+		InputComponent->BindAction(TEXT("Start"), IE_Released, this, &AUnrealBoyEmulatorActor::OnStartKeyReleased);
+	}
+
 	if (!CartridgeFilePath.FilePath.IsEmpty())
 	{
 		Emulator.Start(CartridgeFilePath.FilePath);
+		Emulator.GetOnFrameDoneDelegate().AddUObject(this, &AUnrealBoyEmulatorActor::OnFrameDone);
 	}
 }
 
 void AUnrealBoyEmulatorActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	Emulator.GetOnFrameDoneDelegate().RemoveAll(this);
 	Emulator.Stop();
 	Super::EndPlay(EndPlayReason);
+}
+
+void AUnrealBoyEmulatorActor::OnFrameDone()
+{
+	CaptureScreen();
 }
 
 // Called every frame
@@ -49,7 +80,6 @@ void AUnrealBoyEmulatorActor::Tick(float DeltaTime)
 	{
 		AccumulatedTime = FMath::Fmod(AccumulatedTime, FrameTime);
 		Emulator.Tick(DeltaTime);
-		CaptureScreen();
 	}
 }
 
@@ -124,5 +154,85 @@ void AUnrealBoyEmulatorActor::CopyImageBufferToTexture(uint32 ImageWidth, uint32
 			}
 		}
 	}
+}
+
+void AUnrealBoyEmulatorActor::OnUpKeyPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Up, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnUpKeyReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Up, EUnrealBoyKeyEvent::Released);
+}
+
+void AUnrealBoyEmulatorActor::OnRightKeyPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Right, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnRightKeyReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Right, EUnrealBoyKeyEvent::Released);
+}
+
+void AUnrealBoyEmulatorActor::OnDownKeyPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Down, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnDownKeyReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Down, EUnrealBoyKeyEvent::Released);
+}
+
+void AUnrealBoyEmulatorActor::OnLeftKeyPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Left, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnLeftKeyReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Left, EUnrealBoyKeyEvent::Released);
+}
+
+void AUnrealBoyEmulatorActor::OnFunctionAPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::A, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnFunctionAReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::A, EUnrealBoyKeyEvent::Released);
+}
+
+void AUnrealBoyEmulatorActor::OnFunctionBPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::B, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnFunctionBReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::B, EUnrealBoyKeyEvent::Released);
+}
+
+void AUnrealBoyEmulatorActor::OnSelectKeyPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Select, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnSelectKeyReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Select, EUnrealBoyKeyEvent::Released);
+}
+
+void AUnrealBoyEmulatorActor::OnStartKeyPressed()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Start, EUnrealBoyKeyEvent::Pressed);
+}
+
+void AUnrealBoyEmulatorActor::OnStartKeyReleased()
+{
+	Emulator.OnKeyEvent(EUnrealBoyKeyType::Start, EUnrealBoyKeyEvent::Released);
 }
 

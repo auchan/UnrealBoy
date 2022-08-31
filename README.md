@@ -12,7 +12,8 @@ Yet another game boy emulator written in Unreal C++. Currently only accomplish v
   - ❓  MBC 2 (Need test)
   - ✅ MBC 3
   - ❌ MBC 5
-- ❌ Input
+- ✅ Input
+- ❌ Load & Save
 - ❌ Audio
 - ❌ RTC
 

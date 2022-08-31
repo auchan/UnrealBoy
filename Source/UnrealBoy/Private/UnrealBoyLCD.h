@@ -75,6 +75,8 @@ public:
 	
 	void RequestClearCache();
 
+	FSimpleMulticastDelegate OnFrameDone;
+	
 	static uint32 NUM_ROWS;
 	static uint32 NUM_COLS;
 	static uint32 NUM_PIXELS;

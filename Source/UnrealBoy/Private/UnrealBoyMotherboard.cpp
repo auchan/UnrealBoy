@@ -154,6 +154,16 @@ const TArray<FColor>& FUnrealBoyMotherboard::GetTileMap1Buffer() const
 	return  LCD->GetTileMap1Buffer();
 }
 
+FSimpleMulticastDelegate& FUnrealBoyMotherboard::GetOnFrameDoneDelegate() const
+{
+	return LCD->OnFrameDone;
+}
+
+void FUnrealBoyMotherboard::OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent)
+{
+	JoyPad->OnKeyEvent(KeyType, KeyEvent);
+}
+
 bool FUnrealBoyMotherboard::Tick()
 {
 	while (LCD->ProcessingFrame())

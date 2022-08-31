@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealBoyTypes.h"
 
 class FUnrealBoyMotherboard;
+
 /**
  * The input register
  */
@@ -15,7 +17,13 @@ public:
 
 	/** Write memory by specified address */
 	void WriteMemory(uint16 Address, uint8 Value);
+	
+	/** On key event */
+	void OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent);
 
+protected:
+	void SetKeyBit(uint8& Keys, uint8 Bit, bool bReset);
+	
 private:
 	/** Reference to motherboard */
 	FUnrealBoyMotherboard& Motherboard;

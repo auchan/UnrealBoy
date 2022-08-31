@@ -17,9 +17,12 @@ public:
 	AUnrealBoyEmulatorActor();
 
 protected:
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	void OnFrameDone();
 
 public:
 	// Called every frame
@@ -30,6 +33,31 @@ public:
 	
 	void CopyImageBufferToTexture(uint32 ImageWidth, uint32 ImageHeight, const TArray<FColor>& Buffer, UTexture2D*& InScreenTexture);
 
+protected:
+	void OnUpKeyPressed();
+	void OnUpKeyReleased();
+	
+	void OnRightKeyPressed();
+	void OnRightKeyReleased();
+	
+	void OnDownKeyPressed();
+	void OnDownKeyReleased();
+	
+	void OnLeftKeyPressed();
+	void OnLeftKeyReleased();
+	
+	void OnFunctionAPressed();
+	void OnFunctionAReleased();
+	
+	void OnFunctionBPressed();
+	void OnFunctionBReleased();
+	
+	void OnSelectKeyPressed();
+	void OnSelectKeyReleased();
+	
+	void OnStartKeyPressed();
+	void OnStartKeyReleased();
+	
 private:
 	UPROPERTY(EditAnywhere)
 	FFilePath CartridgeFilePath;

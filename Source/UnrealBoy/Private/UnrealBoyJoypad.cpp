@@ -4,6 +4,17 @@
 #include "UnrealBoyJoypad.h"
 #include "UnrealBoyMotherboard.h"
 
+namespace UnrealBoyNativeKeyType
+{
+	enum EType
+	{
+		P10,
+		P11,
+		P12,
+		P13,
+	};
+};
+
 FUnrealBoyJoyPad::FUnrealBoyJoyPad(FUnrealBoyMotherboard& InMotherboard)
 	: Motherboard(InMotherboard)
 	, JoyPadRegister(UNREALBOY_GET_MEMORY_REF(JoyPad))
@@ -41,5 +52,50 @@ void FUnrealBoyJoyPad::WriteMemory(uint16 Address, uint8 Value)
 	{
 		// Select action button
 		JoyPadRegister = Value & PressedFunctionalKeys;
+	}
+}
+
+void FUnrealBoyJoyPad::OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent)
+{
+	bool bResetBit = (KeyEvent == EUnrealBoyKeyEvent::Pressed);
+	
+	switch (KeyType)
+	{
+	case EUnrealBoyKeyType::Right:
+		SetKeyBit(PressedDirectionalKeys, UnrealBoyNativeKeyType::P10, bResetBit);
+		break;
+	case EUnrealBoyKeyType::Left:
+		SetKeyBit(PressedDirectionalKeys, UnrealBoyNativeKeyType::P11, bResetBit);
+		break;
+	case EUnrealBoyKeyType::Up:
+		SetKeyBit(PressedDirectionalKeys, UnrealBoyNativeKeyType::P12, bResetBit);
+		break;
+	case EUnrealBoyKeyType::Down:
+		SetKeyBit(PressedDirectionalKeys, UnrealBoyNativeKeyType::P13, bResetBit);
+		break;
+	case EUnrealBoyKeyType::A:
+		SetKeyBit(PressedFunctionalKeys, UnrealBoyNativeKeyType::P10, bResetBit);
+		break;
+	case EUnrealBoyKeyType::B:
+		SetKeyBit(PressedFunctionalKeys, UnrealBoyNativeKeyType::P11, bResetBit);
+		break;
+	case EUnrealBoyKeyType::Select:
+		SetKeyBit(PressedFunctionalKeys, UnrealBoyNativeKeyType::P12, bResetBit);
+		break;
+	case EUnrealBoyKeyType::Start:
+		SetKeyBit(PressedFunctionalKeys, UnrealBoyNativeKeyType::P13, bResetBit);
+		break;
+	}
+}
+
+void FUnrealBoyJoyPad::SetKeyBit(uint8& Keys, uint8 Bit, bool bReset)
+{
+	if (bReset)
+	{
+		Keys &= ~(1 << Bit);
+	}
+	else
+	{
+		Keys |= (1 << Bit);
 	}
 }
