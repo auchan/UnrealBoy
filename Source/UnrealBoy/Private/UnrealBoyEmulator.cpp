@@ -69,6 +69,7 @@ void FUnrealBoyEmulator::OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEven
 
 bool FUnrealBoyEmulator::LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const
 {
+	const FString ROMFileFullPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), InROMFilePath);
 	// Ensure file exist
-	return FFileHelper::LoadFileToArray(OutLoadedData, *InROMFilePath);
+	return FFileHelper::LoadFileToArray(OutLoadedData, *ROMFileFullPath);
 }

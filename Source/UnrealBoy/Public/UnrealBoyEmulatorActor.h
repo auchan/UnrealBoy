@@ -59,7 +59,7 @@ protected:
 	void OnStartKeyReleased();
 	
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta = (RelativeToGameDir))
 	FFilePath CartridgeFilePath;
 
 	UPROPERTY(EditAnywhere)

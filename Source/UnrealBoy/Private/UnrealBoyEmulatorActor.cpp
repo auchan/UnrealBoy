@@ -46,7 +46,10 @@ void AUnrealBoyEmulatorActor::BeginPlay()
 
 	if (!CartridgeFilePath.FilePath.IsEmpty())
 	{
-		Emulator.Start(CartridgeFilePath.FilePath);
+		if (Emulator.Start(CartridgeFilePath.FilePath) != 0)
+		{
+			return;
+		}
 		Emulator.GetOnFrameDoneDelegate().AddUObject(this, &AUnrealBoyEmulatorActor::OnFrameDone);
 	}
 }

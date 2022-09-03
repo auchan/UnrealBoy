@@ -41,9 +41,21 @@ uint8 FUnrealBoyMotherboard::ReadMemory(uint16 Address)
 			return MBC->ReadMemory(Address);
 		}
 	}
-	else if (Address < 0x8000) // 16KB switchable ROM bank
+	else if (0x4000 <= Address &&  Address < 0x8000) // 16KB switchable ROM bank
 	{
 		return MBC->ReadMemory(Address);
+	}
+	else if (0xA000 <= Address &&  Address < 0xC000) // 8KB switchable RAM bank
+	{
+		return MBC->ReadMemory(Address);
+	}
+	else if (0xC000 <= Address &&  Address < 0xE000) // 8KB internal RAM
+	{
+		return MemoryBlock[Address];
+	}
+	else if (0xE000 <= Address &&  Address < 0xFE00) // Echo of 8KB internal RAM
+	{
+		return MemoryBlock[Address - 0x2000];
 	}
 	
 	return MemoryBlock[Address];
@@ -83,6 +95,19 @@ void FUnrealBoyMotherboard::WriteMemory(uint16 Address, uint8 Value)
 			// Mask out the byte of the tile (one tile has 16 bytes)
 			LCD->AddChangedTile(Address & 0xFFF0);
 		}
+	}
+	else if (0xA000 <= Address && Address < 0xC000) // 8KB switchable RAM bank
+	{
+		MBC->WriteMemory(Address, Value);
+	}
+	else if (0xC000 <= Address &&  Address < 0xE000) // 8KB internal RAM
+	{
+		MemoryBlock[Address] = Value;
+	}
+	else if (0xE000 <= Address &&  Address < 0xFE00) // Echo of 8KB internal RAM
+	{
+		// Redirect to 0xC000
+		MemoryBlock[Address - 0x2000] = Value; 
 	}
 	else if (0xFF00 <= Address && Address < 0xFF4C) // I/O ports
 	{
