@@ -1,10 +1,11 @@
 ﻿// License: See LICENSE.txt file
 
 
-#include "UnrealBoyEmulatorActor.h"
+#include "Actor/UnrealBoyEmulatorActor.h"
 
 #include "ImageUtils.h"
 #include "UnrealBoyLCD.h"
+#include "Utility/UnrealBoyUtility.h"
 
 
 // Sets default values
@@ -103,11 +104,8 @@ void AUnrealBoyEmulatorActor::CopyImageBufferToTexture(uint32 ImageWidth, uint32
 {
 	if (!InScreenTexture)
 	{
-		UPackage* Package = GetTransientPackage();
-		FName TextureName = MakeUniqueObjectName(Package, UTexture2D::StaticClass(), TEXT("T_ScreenCapture"));
-		FCreateTexture2DParameters Parameters;
-		Parameters.CompressionSettings = TextureCompressionSettings::TC_EditorIcon;
-		InScreenTexture = FImageUtils::CreateTexture2D(ImageWidth, ImageHeight, Buffer, Package, TextureName.ToString(), RF_Public | RF_Standalone | RF_Transient, Parameters);
+
+		InScreenTexture = FUnrealBoyUtility::CreateBufferTexture(Buffer, ImageWidth, ImageHeight, TEXT("ScreenTexture"));
 
 		if (ScreenDisplayActor)
 		{
@@ -134,28 +132,7 @@ void AUnrealBoyEmulatorActor::CopyImageBufferToTexture(uint32 ImageWidth, uint32
 	}
 	else
 	{
-		if (FTexturePlatformData* TexPlatformData = InScreenTexture->GetPlatformData())
-		{
-			if (TexPlatformData->Mips.Num() > 0)
-			{
-				uint8* MipData = static_cast<uint8*>(TexPlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE));
-				for(uint32 Y = 0; Y < ImageHeight; Y++ )
-				{
-					uint8* DestPtr = &MipData[(ImageHeight - 1 - Y) * ImageWidth * sizeof(FColor)];
-					FColor* SrcPtr = const_cast<FColor*>(&Buffer[(ImageHeight - 1 - Y) * ImageWidth]);
-					for(uint32 X = 0; X < ImageWidth; X++ )
-					{
-						*DestPtr++ = SrcPtr->B;
-						*DestPtr++ = SrcPtr->G;
-						*DestPtr++ = SrcPtr->R;
-						*DestPtr++ = 0xFF;
-						SrcPtr++;
-					}
-				}
-				ScreenTexture->GetPlatformData()->Mips[0].BulkData.Unlock();
-				ScreenTexture->UpdateResource();		
-			}
-		}
+		FUnrealBoyUtility::UpdateBufferTexture(Buffer, ImageWidth, ImageHeight, InScreenTexture);
 	}
 }
 

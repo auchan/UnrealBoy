@@ -1,8 +1,10 @@
 # Unreal Boy
 
-![](Resources/Images/UnrealBoy_Pokemon.gif)
+![Emulator Actor](Resources/Images/UnrealBoy_Pokemon.gif)
 
-Yet another game boy emulator written in Unreal C++. Currently only accomplish very basic features:
+Yet another game boy emulator written in Unreal C++. 
+
+Features list:
 
 - ✅ Motherboard
 - ✅ CPU
@@ -18,6 +20,12 @@ Yet another game boy emulator written in Unreal C++. Currently only accomplish v
 - ✅ Load & Save
 - ❌ Audio
 - ❌ RTC
+- ✅ Emulator Actor
+- ✅ Emulator UMG Widget
+
+![Emulator Widget Editor](Resources/Images/UnrealBoy_PokemonWidgetEditor.png)
+
+![Emulator Widget](Resources/Images/UnrealBoy_PokemonWidget.gif)
 
 ## Installation
 

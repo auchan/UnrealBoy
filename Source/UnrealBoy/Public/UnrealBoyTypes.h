@@ -69,6 +69,7 @@ namespace UnrealBoyAddressNames
 	constexpr uint16 LCD_WX = 0xFF4B; // Window X position
 }
 
+UENUM(BlueprintType)
 enum class EUnrealBoyKeyType : uint8
 {
 	Right,
@@ -81,6 +82,7 @@ enum class EUnrealBoyKeyType : uint8
 	Start,
 };
 
+UENUM(BlueprintType)
 enum class EUnrealBoyKeyEvent : uint8
 {
 	Pressed,

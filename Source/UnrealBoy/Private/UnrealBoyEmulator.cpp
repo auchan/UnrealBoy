@@ -19,30 +19,41 @@ int32 FUnrealBoyEmulator::Start(const FString& InROMFilePath)
 	SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), InROMFilePath + TEXT(".ubsave"));
 	if (HasAnyFlags(EUnrealBoyEmulatorFlags::AutoLoadWhenStart))
 	{
-		LoadData(SaveDataFilePath);
+		Load();
 	}
 
 	return 0;
 }
 
-void FUnrealBoyEmulator::Tick(float InDeltaTime)
+bool FUnrealBoyEmulator::Tick(float InDeltaTime)
 {
 	if (!IsValid())
 	{
-		return;
+		return false;
+	}
+
+	constexpr float FrameTime = 1.f / 60;
+	AccumulatedTime += InDeltaTime;
+	if (AccumulatedTime < FrameTime)
+	{
+		return false;
 	}
 	
 	if (Motherboard)
 	{
 		Motherboard->Tick();
 	}
+
+	AccumulatedTime = FMath::Fmod(AccumulatedTime, FrameTime);
+
+	return true;
 }
 
 int32 FUnrealBoyEmulator::Stop()
 {
 	if (HasAnyFlags(EUnrealBoyEmulatorFlags::AutoSaveWhenStop))
 	{
-		SaveData(SaveDataFilePath);
+		Save();
 	}
 
 	Motherboard.Reset();
@@ -77,6 +88,16 @@ void FUnrealBoyEmulator::OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEven
 		return;
 	}
 	Motherboard->OnKeyEvent(KeyType, KeyEvent);
+}
+
+void FUnrealBoyEmulator::Load()
+{
+	LoadData(SaveDataFilePath);
+}
+
+void FUnrealBoyEmulator::Save()
+{
+	SaveData(SaveDataFilePath);
 }
 
 bool FUnrealBoyEmulator::LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const

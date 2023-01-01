@@ -29,7 +29,7 @@ public:
 
 	int32 Start(const FString& InROMFilePath);
 
-	void Tick(float InDeltaTime);
+	bool Tick(float InDeltaTime);
 
 	int32 Stop();
 
@@ -48,19 +48,23 @@ public:
 	/** On key event */
 	void OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent);
 
-	/** Load data from file */
-	void LoadData(const FString& InFilePath);
+	void Load();
 
-	/** Save data to file */
-	void SaveData(const FString& InFilePath);
-
-	/** Serialize to archive or deserialize from archive (depend on archive type)  */
-	virtual void Serialize(FArchive& Ar) override;
+	void Save();
 
 protected:
 	bool LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const;
 
 	bool HasAnyFlags(uint32 InFlags) const;
+
+	/** Serialize to archive or deserialize from archive (depend on archive type)  */
+	virtual void Serialize(FArchive& Ar) override;
+
+	/** Load data from file */
+	void LoadData(const FString& InFilePath);
+
+	/** Save data to file */
+	void SaveData(const FString& InFilePath);
 	
 protected:
 	/** The emulated motherboard */
@@ -71,4 +75,7 @@ protected:
 
 	/** The save data file path calculated by ROM file path */
 	FString SaveDataFilePath;
+
+	/** Accumulated time between lastest ticks */
+	float AccumulatedTime = 0;
 };

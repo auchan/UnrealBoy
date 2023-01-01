@@ -38,6 +38,8 @@ public class UnrealBoy : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"InputCore",
+				"UMG",
 				// ... add private dependencies that you statically link with here ...	
 				"Projects",
 			}
