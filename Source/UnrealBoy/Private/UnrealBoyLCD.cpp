@@ -73,6 +73,14 @@ FUnrealBoyLCD::~FUnrealBoyLCD()
 {
 }
 
+void FUnrealBoyLCD::Serialize(FArchive& Ar)
+{
+	if (Ar.IsLoading())
+	{
+		bNeedClearCache = true;
+	}
+}
+
 void FUnrealBoyLCD::SetLCDC(uint8 Value)
 {
 	LCDC.SetValue(Value);

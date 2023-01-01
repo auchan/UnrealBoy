@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealBoyTypes.h"
 
 class FUnrealBoyMotherboard;
 /**
@@ -12,10 +13,12 @@ class FUnrealBoyMotherboard;
  * 10:  65536 Hz (OSC/64)
  * 11:  16384 Hz (OSC/256)
  */
-class FUnrealBoyTimer
+class FUnrealBoyTimer : public IUnrealBoySerializable
 {
 public:
 	FUnrealBoyTimer(FUnrealBoyMotherboard& InMotherboard);
+
+	virtual void Serialize(FArchive& Ar) override;
 
 	/** Read memory by specified address */
 	uint8 ReadMemory(uint16 Address);

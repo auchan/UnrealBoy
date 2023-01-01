@@ -16,6 +16,12 @@ FUnrealBoyTimer::FUnrealBoyTimer(FUnrealBoyMotherboard& InMotherboard)
 {
 }
 
+void FUnrealBoyTimer::Serialize(FArchive& Ar)
+{
+	Ar << DIVCounter;
+	Ar << TIMACounter;
+}
+
 uint8 FUnrealBoyTimer::ReadMemory(uint16 Address)
 {
 	// Not used

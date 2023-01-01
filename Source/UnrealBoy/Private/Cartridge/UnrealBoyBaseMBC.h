@@ -3,18 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealBoyTypes.h"
 
 /**
  * The base memory bank controller.
  * MBC chips are located in the game cartridge (that is, not in the Game Boy itself).
  * In each cartridge, the required (or preferred) MBC type should be specified in the byte at $0147 of the ROM.
  */
-class FUnrealBoyBaseMBC
+class FUnrealBoyBaseMBC : public IUnrealBoySerializable
 {
 public:
-	virtual ~FUnrealBoyBaseMBC() {}
+	virtual ~FUnrealBoyBaseMBC() override {}
 
 	virtual void Initialize(const TArray<uint8>& InRomData, uint8 InRamCount, bool bIsRTCEnabled);
+
+	virtual void Serialize(FArchive& Ar) override;
 
 	/** Read memory by specified address */
 	virtual uint8 ReadMemory(uint16 Address);

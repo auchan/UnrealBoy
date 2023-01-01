@@ -5,11 +5,11 @@
 
 #include "ImageUtils.h"
 #include "UnrealBoyLCD.h"
-#include "UnrealBoyMotherboard.h"
 
 
 // Sets default values
 AUnrealBoyEmulatorActor::AUnrealBoyEmulatorActor()
+	: Emulator(EUnrealBoyEmulatorFlags::AutoLoadWhenStart | EUnrealBoyEmulatorFlags::AutoSaveWhenStop)
 {
 	RootComponent = CreateDefaultSubobject<USceneComponent>(USceneComponent::GetDefaultSceneRootVariableName());
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.

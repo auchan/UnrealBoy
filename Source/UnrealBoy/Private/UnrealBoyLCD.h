@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealBoyTypes.h"
 
 class FUnrealBoyMotherboard;
 
@@ -45,11 +46,13 @@ private:
  * Liquid-crystal display device.
  * We also simulate a picture processing unit (PPU) in it
  */
-class FUnrealBoyLCD
+class FUnrealBoyLCD : public IUnrealBoySerializable
 {
 public:
 	FUnrealBoyLCD(FUnrealBoyMotherboard& InMotherboard);
 	~FUnrealBoyLCD();
+
+	virtual void Serialize(FArchive& Ar) override;
 	
 	/** Set the value of LCD control register */
 	void SetLCDC(uint8 Value);

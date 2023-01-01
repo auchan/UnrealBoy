@@ -7,12 +7,26 @@
 
 class FUnrealBoyMotherboard;
 
+namespace EUnrealBoyEmulatorFlags
+{
+	enum Type
+	{
+		None = 0,
+		AutoLoadWhenStart = 1 << 0,
+		AutoSaveWhenStop = 1 << 1,
+	};
+}
+
 /**
  * 
  */
-class UNREALBOY_API FUnrealBoyEmulator
+class UNREALBOY_API FUnrealBoyEmulator : public IUnrealBoySerializable
 {
 public:
+	FUnrealBoyEmulator(uint32 InFlags = 0)
+		: Flags(InFlags)
+	{}
+
 	int32 Start(const FString& InROMFilePath);
 
 	void Tick(float InDeltaTime);
@@ -33,10 +47,28 @@ public:
 
 	/** On key event */
 	void OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent);
+
+	/** Load data from file */
+	void LoadData(const FString& InFilePath);
+
+	/** Save data to file */
+	void SaveData(const FString& InFilePath);
+
+	/** Serialize to archive or deserialize from archive (depend on archive type)  */
+	virtual void Serialize(FArchive& Ar) override;
+
 protected:
 	bool LoadROMFile(const FString& InROMFilePath, TArray<uint8>& OutLoadedData) const;
+
+	bool HasAnyFlags(uint32 InFlags) const;
 	
 protected:
 	/** The emulated motherboard */
 	TSharedPtr<FUnrealBoyMotherboard> Motherboard;
+
+	/** Various emulator settings flags*/
+	uint32 Flags = 0;
+
+	/** The save data file path calculated by ROM file path */
+	FString SaveDataFilePath;
 };

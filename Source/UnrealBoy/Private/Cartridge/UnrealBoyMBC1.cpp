@@ -4,6 +4,15 @@
 #include "UnrealBoyMBC1.h"
 #include "UnrealBoyLog.h"
 
+void FUnrealBoyMBC1::Serialize(FArchive& Ar)
+{
+	FUnrealBoyBaseMBC::Serialize(Ar);
+
+	Ar << BankSelectRegister1;
+	Ar << BankSelectRegister2;
+	Ar << BankingMode;
+}
+
 uint8 FUnrealBoyMBC1::ReadMemory(uint16 Address)
 {
 	if (Address < 0x4000) // Read from rom bank #0 or selectable rom banks

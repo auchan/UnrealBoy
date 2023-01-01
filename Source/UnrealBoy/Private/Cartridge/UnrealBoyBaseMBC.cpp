@@ -18,6 +18,15 @@ void FUnrealBoyBaseMBC::Initialize(const TArray<uint8>& InRomData, uint8 InRamCo
 	bRTCEnabled = bIsRTCEnabled;
 }
 
+void FUnrealBoyBaseMBC::Serialize(FArchive& Ar)
+{
+	Ar << bRamBankEnabled;
+	Ar << RamBankSelection;
+	Ar << RamBankCount;
+	Ar << RamBankDataArray;
+	Ar << bRTCEnabled;
+}
+
 uint8 FUnrealBoyBaseMBC::ReadMemory(uint16 Address)
 {
 	if (Address < 0x4000)

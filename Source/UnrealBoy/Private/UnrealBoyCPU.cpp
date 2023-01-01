@@ -59,6 +59,22 @@ FUnrealBoyCPU::~FUnrealBoyCPU()
 {
 }
 
+void FUnrealBoyCPU::Serialize(FArchive& Ar)
+{
+	//Ar.UsingCustomVersion()
+	Ar << A << F;
+	Ar << B << C;
+	Ar << D << E;
+	Ar << HL;
+	Ar << SP;
+	Ar << PC;
+	Ar << bInterruptQueued;
+	Ar << bInterruptMasterEnabled;
+	Ar << bHalted;
+	Ar << bStuck;
+	Ar << bStopped;
+}
+
 uint8 FUnrealBoyCPU::Tick()
 {
 	if (CheckInterrupts())

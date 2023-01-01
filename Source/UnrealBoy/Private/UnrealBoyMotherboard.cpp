@@ -32,6 +32,17 @@ FUnrealBoyMotherboard::~FUnrealBoyMotherboard()
 {
 }
 
+void FUnrealBoyMotherboard::Serialize(FArchive& Ar)
+{
+	Ar << MemoryBlock;
+	Ar << bBootRomEnabled;
+
+	CPU->Serialize(Ar);
+	MBC->Serialize(Ar);
+	LCD->Serialize(Ar);
+	Timer->Serialize(Ar);
+}
+
 uint8 FUnrealBoyMotherboard::ReadMemory(uint16 Address)
 {
 	if (Address < 0x4000) // 16KB ROM bank 0

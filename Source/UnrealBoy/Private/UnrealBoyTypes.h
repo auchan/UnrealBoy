@@ -14,6 +14,15 @@ public:
 	uint8 Value;
 };
 
+class IUnrealBoySerializable
+{
+public:
+	virtual void Serialize(FArchive& Ar) = 0;
+
+	virtual ~IUnrealBoySerializable() {}
+};
+
+
 namespace UnrealBoy
 {
 	constexpr uint8 INTR_VBLANK = (1 << 0);	
@@ -76,4 +85,24 @@ enum class EUnrealBoyKeyEvent : uint8
 {
 	Pressed,
 	Released ,
+};
+
+// Custom serialization version for changes made in Unreal Boy Emulator
+struct FUnrealBoySaveVersion
+{
+	enum Type
+	{
+		// Before any version changes were made
+		BeforeCustomVersionWasAdded = 0,
+
+		// -----<new versions can be added above this line>-------------------------------------------------
+		VersionPlusOne,
+		LatestVersion = VersionPlusOne - 1
+	};
+
+	// The GUID for this custom version number
+	const static FGuid GUID;
+
+private:
+	FUnrealBoySaveVersion() {}
 };

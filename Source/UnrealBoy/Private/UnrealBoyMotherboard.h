@@ -11,12 +11,14 @@
 /**
  * Motherboard
  */
-class UNREALBOY_API FUnrealBoyMotherboard
+class UNREALBOY_API FUnrealBoyMotherboard : public IUnrealBoySerializable
 {
 	DECLARE_DELEGATE_RetVal_ThreeParams(bool, FWriteMemoryDelegate, uint16 /** Address */, uint8 /** OldValue */, uint8 /** NewValue */);
 public:
 	FUnrealBoyMotherboard(const TArray<uint8>& InROMData);
-	~FUnrealBoyMotherboard();
+	virtual ~FUnrealBoyMotherboard() override;
+
+	virtual void Serialize(FArchive& Ar) override;
 
 	/** Read memory by specified address */
 	uint8 ReadMemory(uint16 Address);

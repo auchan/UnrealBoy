@@ -14,6 +14,8 @@ class FUnrealBoyMBC1 : public FUnrealBoyBaseMBC
 {
 public:
 	FUnrealBoyMBC1() = default;
+
+	virtual void Serialize(FArchive& Ar) override;
 	
 	virtual uint8 ReadMemory(uint16 Address) override;
 
@@ -25,9 +27,6 @@ protected:
 	
 	/** RAM bank number or upper bits of ROM bank number register */
 	uint8 BankSelectRegister2 = 0;
-
-	/** Whether RAM bank is enabled */ 
-	bool bRamBankEnabled = false;
 
 	/** Banking mode: 0 or 1 */
 	uint8 BankingMode = 0;

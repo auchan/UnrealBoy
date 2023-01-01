@@ -1,5 +1,7 @@
 # Unreal Boy
 
+![](Resources/Images/UnrealBoy_Pokemon.gif)
+
 Yet another game boy emulator written in Unreal C++. Currently only accomplish very basic features:
 
 - ✅ Motherboard
@@ -13,7 +15,7 @@ Yet another game boy emulator written in Unreal C++. Currently only accomplish v
   - ✅ MBC 3
   - ❌ MBC 5
 - ✅ Input
-- ❌ Load & Save
+- ✅ Load & Save
 - ❌ Audio
 - ❌ RTC
 

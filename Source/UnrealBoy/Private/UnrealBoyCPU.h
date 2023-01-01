@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UnrealBoyOpcodes.h"
+#include "UnrealBoyTypes.h"
 
 class FUnrealBoyMotherboard;
 
@@ -18,11 +19,13 @@ namespace UnrealBoy
 /**
  * 
  */
-class UNREALBOY_API FUnrealBoyCPU
+class UNREALBOY_API FUnrealBoyCPU : public IUnrealBoySerializable
 {
 public:
 	FUnrealBoyCPU(FUnrealBoyMotherboard& InMotherboard);
-	~FUnrealBoyCPU();
+	virtual ~FUnrealBoyCPU() override;
+
+	virtual void Serialize(FArchive& Ar) override;
 
 	/**
 	 * Make one tick on the emulated CPU

@@ -15,6 +15,13 @@ int32 FUnrealBoyEmulator::Start(const FString& InROMFilePath)
 	}
 	
 	Motherboard = MakeShareable(new FUnrealBoyMotherboard(ROMData));
+
+	SaveDataFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), InROMFilePath + TEXT(".ubsave"));
+	if (HasAnyFlags(EUnrealBoyEmulatorFlags::AutoLoadWhenStart))
+	{
+		LoadData(SaveDataFilePath);
+	}
+
 	return 0;
 }
 
@@ -33,6 +40,11 @@ void FUnrealBoyEmulator::Tick(float InDeltaTime)
 
 int32 FUnrealBoyEmulator::Stop()
 {
+	if (HasAnyFlags(EUnrealBoyEmulatorFlags::AutoSaveWhenStop))
+	{
+		SaveData(SaveDataFilePath);
+	}
+
 	Motherboard.Reset();
 	return 0;
 }
@@ -72,4 +84,48 @@ bool FUnrealBoyEmulator::LoadROMFile(const FString& InROMFilePath, TArray<uint8>
 	const FString ROMFileFullPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir(), InROMFilePath);
 	// Ensure file exist
 	return FFileHelper::LoadFileToArray(OutLoadedData, *ROMFileFullPath);
+}
+
+bool FUnrealBoyEmulator::HasAnyFlags(uint32 InFlags) const
+{
+	return (Flags & InFlags) != 0;
+}
+
+void FUnrealBoyEmulator::LoadData(const FString& InFilePath)
+{
+	const TUniquePtr<FArchive> Ar = TUniquePtr<FArchive>(IFileManager::Get().CreateFileReader(*InFilePath));
+	if (!Ar || !Motherboard)
+	{
+		return;
+	}
+
+	// Read
+	Serialize(*Ar.Get());
+}
+
+void FUnrealBoyEmulator::SaveData(const FString& InFilePath)
+{
+	const TUniquePtr<FArchive> Ar = TUniquePtr<FArchive>(IFileManager::Get().CreateFileWriter(*InFilePath, FILEWRITE_AllowRead));
+	if (!Ar || !Motherboard)
+	{
+		return;
+	}
+
+	// Write
+	Serialize(*Ar.Get());
+}
+
+void FUnrealBoyEmulator::Serialize(FArchive& Ar)
+{
+	int32 CustomVer = 0;
+	if (Ar.IsSaving())
+	{
+		CustomVer = static_cast<int32>(FUnrealBoySaveVersion::LatestVersion);
+	}
+	Ar << CustomVer;
+
+	const FCustomVersion RegisteredVersion = FCurrentCustomVersions::Get(FUnrealBoySaveVersion::GUID).GetValue();
+	Ar.SetCustomVersion(FUnrealBoySaveVersion::GUID, CustomVer, RegisteredVersion.GetFriendlyName());
+
+	Motherboard->Serialize(Ar);
 }
