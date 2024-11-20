@@ -10,7 +10,7 @@ class FUnrealBoyEmulator;
 /**
  * 
  */
-class UNREALBOY_API SUnrealBoyEmulatorWidget : public SCompoundWidget
+class UNREALBOY_API SUnrealBoyEmulatorWidget : public SCompoundWidget, public FGCObject
 {
 public:
 	SLATE_BEGIN_ARGS(SUnrealBoyEmulatorWidget)
@@ -24,10 +24,14 @@ public:
 	virtual ~SUnrealBoyEmulatorWidget() override;
 
 	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
-	virtual FReply OnPreviewKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual bool SupportsKeyboardFocus() const override { return true; }
+
+	// Begin FGCObject Interface
+	void AddReferencedObjects(FReferenceCollector& Collector) override;
+	virtual FString GetReferencerName() const override;
+	// End FGCObject Interface
 
 	void OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent) const;
 
@@ -45,7 +49,7 @@ protected:
 
 	FSlateBrush ScreenBufferBrush;
 
-	UTexture2D* ScreenBufferTexture;
+	UTexture2D* ScreenBufferTexture = nullptr;
 
 	TSharedPtr<FUnrealBoyEmulator> Emulator;
 
