@@ -8,6 +8,7 @@
 #include "UnrealBoyJoypad.h"
 #include "UnrealBoyLCD.h"
 #include "UnrealBoyTimer.h"
+#include "UnrealBoyAPU.h"
 #include "Cartridge/UnrealBoyBaseMBC.h"
 #include "Cartridge/UnrealBoyCartridge.h"
 
@@ -24,12 +25,17 @@ FUnrealBoyMotherboard::FUnrealBoyMotherboard(const TArray<uint8>& InROMData)
 	LCD = MakeShareable(new FUnrealBoyLCD(*this));
 	Timer = MakeShareable(new FUnrealBoyTimer(*this));
 	JoyPad = MakeShareable(new FUnrealBoyJoyPad(*this));
+	APU = MakeShareable(new FUnrealBoyAPU(*this));
 
 	InitializeMemoryDelegates();
 }
 
 FUnrealBoyMotherboard::~FUnrealBoyMotherboard()
 {
+	if (APU)
+	{
+		APU->Shutdown();
+	}
 }
 
 void FUnrealBoyMotherboard::Serialize(FArchive& Ar)
@@ -41,6 +47,7 @@ void FUnrealBoyMotherboard::Serialize(FArchive& Ar)
 	MBC->Serialize(Ar);
 	LCD->Serialize(Ar);
 	Timer->Serialize(Ar);
+	APU->Serialize(Ar);
 }
 
 uint8 FUnrealBoyMotherboard::ReadMemory(uint16 Address)
@@ -200,6 +207,14 @@ void FUnrealBoyMotherboard::OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyE
 	JoyPad->OnKeyEvent(KeyType, KeyEvent);
 }
 
+void FUnrealBoyMotherboard::StartTestAudio(float Frequency, float Volume)
+{
+	if (APU)
+	{
+		APU->GenerateTestAudio(Frequency, Volume);
+	}
+}
+
 bool FUnrealBoyMotherboard::Tick()
 {
 	while (LCD->ProcessingFrame())
@@ -226,7 +241,16 @@ bool FUnrealBoyMotherboard::Tick()
 		{
 			CPU->SetInterruptFlag(LCDInterrupts);
 		}	
+
+		// Tick APU for each CPU cycle
+		for (uint32 i = 0; i < Cycles; i++)
+		{
+			APU->Tick();
+		}
 	}
+	
+	// Update APU audio output
+	APU->UpdateAudioOutput();
 	
 	return true;
 }
@@ -251,6 +275,16 @@ FString FUnrealBoyMotherboard::DumpState(const FString& InLabel) const
 void FUnrealBoyMotherboard::InitializeMemoryDelegates()
 {
 	WriteMemoryDelegateMap.Add(0xFF50).BindRaw(this, &FUnrealBoyMotherboard::OnDisableBootRom);
+	
+	// Initialize APU after creating the memory delegates
+	APU->Initialize();
+	
+	// Register APU memory delegates
+	TMap<uint16, FWriteMemoryDelegate> APUDelegates = APU->GetMemoryWriteDelegates();
+	for (const auto& Pair : APUDelegates)
+	{
+		WriteMemoryDelegateMap.Add(Pair.Key, Pair.Value);
+	}
 }
 
 bool FUnrealBoyMotherboard::OnDisableBootRom(uint16 Address, uint8 OldValue, uint8 NewValue)

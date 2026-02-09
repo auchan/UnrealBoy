@@ -1,4 +1,4 @@
-﻿// License: See LICENSE.txt file
+// License: See LICENSE.txt file
 
 
 #include "UnrealBoyCPU.h"

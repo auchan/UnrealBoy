@@ -1,4 +1,4 @@
-﻿// License: See LICENSE.txt file
+// License: See LICENSE.txt file
 
 
 #include "Actor/UnrealBoyEmulatorActor.h"
@@ -10,7 +10,7 @@
 
 // Sets default values
 AUnrealBoyEmulatorActor::AUnrealBoyEmulatorActor()
-	: Emulator(EUnrealBoyEmulatorFlags::AutoLoadWhenStart | EUnrealBoyEmulatorFlags::AutoSaveWhenStop)
+		: Emulator(EUnrealBoyEmulatorFlags::AutoLoadWhenStart | EUnrealBoyEmulatorFlags::AutoSaveWhenStop)
 {
 	RootComponent = CreateDefaultSubobject<USceneComponent>(USceneComponent::GetDefaultSceneRootVariableName());
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -72,7 +72,8 @@ void AUnrealBoyEmulatorActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	static float FrameTime = 1.f / 60;
+	constexpr float FrameTime = 1.f / 60.f;
+	constexpr int32 MaxCatchUpFrames = 8; // Allow more catch-up to prevent audio underrun
 	
 	AccumulatedTime += DeltaTime;
 	if (!Emulator.IsValid())
@@ -80,10 +81,22 @@ void AUnrealBoyEmulatorActor::Tick(float DeltaTime)
 		return;
 	}
 
-	if (AccumulatedTime >= FrameTime)
+	// Clamp accumulated time BEFORE processing to prevent spiral-of-death.
+	// Only discard time if we're extremely far behind (> MaxCatchUpFrames worth).
+	// This preserves all accumulated time during normal frame drops (e.g. 30 FPS)
+	// and only loses the excess during severe hitches (> 133ms).
+	const float MaxAccumulatedTime = MaxCatchUpFrames * FrameTime;
+	if (AccumulatedTime > MaxAccumulatedTime)
 	{
-		AccumulatedTime = FMath::Fmod(AccumulatedTime, FrameTime);
-		Emulator.Tick(DeltaTime);
+		AccumulatedTime = MaxAccumulatedTime;
+	}
+
+	// Process all pending Game Boy frames. The pre-clamp above guarantees
+	// this loop runs at most MaxCatchUpFrames iterations.
+	while (AccumulatedTime >= FrameTime)
+	{
+		AccumulatedTime -= FrameTime;
+		Emulator.Tick(FrameTime);
 	}
 }
 

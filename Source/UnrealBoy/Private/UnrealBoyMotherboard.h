@@ -8,13 +8,17 @@
 #define UNREALBOY_GET_MEMORY_REF(AddressName) Motherboard.GetMemoryRef(UnrealBoyAddressNames::AddressName)
 #define UNREALBOY_GET_MEMORY_RANGE_VIEW(BeginAddressName, EndAddressName) Motherboard.GetMemoryRangeView(UnrealBoyAddressNames::BeginAddressName, UnrealBoyAddressNames::EndAddressName)
 
+// Forward declaration for memory write delegate
+DECLARE_DELEGATE_RetVal_ThreeParams(bool, FUnrealBoyWriteMemoryDelegate, uint16 /** Address */, uint8 /** OldValue */, uint8 /** NewValue */);
+
 /**
  * Motherboard
  */
 class UNREALBOY_API FUnrealBoyMotherboard : public IUnrealBoySerializable
 {
-	DECLARE_DELEGATE_RetVal_ThreeParams(bool, FWriteMemoryDelegate, uint16 /** Address */, uint8 /** OldValue */, uint8 /** NewValue */);
 public:
+	using FWriteMemoryDelegate = FUnrealBoyWriteMemoryDelegate;
+	
 	FUnrealBoyMotherboard(const TArray<uint8>& InROMData);
 	virtual ~FUnrealBoyMotherboard() override;
 
@@ -50,6 +54,12 @@ public:
 	/** On key event */
 	void OnKeyEvent(EUnrealBoyKeyType KeyType, EUnrealBoyKeyEvent KeyEvent);
 
+	/** Get APU */
+	TSharedPtr<class FUnrealBoyAPU> GetAPU() const { return APU; }
+
+	/** Start test audio (for debugging audio output) */
+	void StartTestAudio(float Frequency = 440.0f, float Volume = 0.3f);
+
 	bool Tick();
 
 	void TransferDMA(uint8 SrcAddress);
@@ -70,6 +80,7 @@ private:
 	TSharedPtr<class FUnrealBoyLCD> LCD;
 	TSharedPtr<class FUnrealBoyTimer> Timer;
 	TSharedPtr<class FUnrealBoyJoyPad> JoyPad;
+	TSharedPtr<class FUnrealBoyAPU> APU;
 
 	// states
 	bool bBootRomEnabled;

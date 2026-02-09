@@ -67,6 +67,37 @@ namespace UnrealBoyAddressNames
 	constexpr uint16 LCD_OBP1 = 0xFF49;
 	constexpr uint16 LCD_WY = 0xFF4A; // Window Y position
 	constexpr uint16 LCD_WX = 0xFF4B; // Window X position
+
+	// Audio registers
+	constexpr uint16 NR10 = 0xFF10; // Channel 1 Sweep
+	constexpr uint16 NR11 = 0xFF11; // Channel 1 Sound length/Wave pattern duty
+	constexpr uint16 NR12 = 0xFF12; // Channel 1 Volume Envelope
+	constexpr uint16 NR13 = 0xFF13; // Channel 1 Frequency lo
+	constexpr uint16 NR14 = 0xFF14; // Channel 1 Frequency hi
+	
+	constexpr uint16 NR21 = 0xFF16; // Channel 2 Sound length/Wave pattern duty
+	constexpr uint16 NR22 = 0xFF17; // Channel 2 Volume Envelope
+	constexpr uint16 NR23 = 0xFF18; // Channel 2 Frequency lo
+	constexpr uint16 NR24 = 0xFF19; // Channel 2 Frequency hi
+	
+	constexpr uint16 NR30 = 0xFF1A; // Channel 3 Sound on/off
+	constexpr uint16 NR31 = 0xFF1B; // Channel 3 Sound length
+	constexpr uint16 NR32 = 0xFF1C; // Channel 3 Select output level
+	constexpr uint16 NR33 = 0xFF1D; // Channel 3 Frequency lo
+	constexpr uint16 NR34 = 0xFF1E; // Channel 3 Frequency hi
+	
+	constexpr uint16 NR41 = 0xFF20; // Channel 4 Sound length
+	constexpr uint16 NR42 = 0xFF21; // Channel 4 Volume Envelope
+	constexpr uint16 NR43 = 0xFF22; // Channel 4 Polynomial counter
+	constexpr uint16 NR44 = 0xFF23; // Channel 4 Counter/consecutive; Initial
+	
+	constexpr uint16 NR50 = 0xFF24; // Channel control / ON-OFF / Volume
+	constexpr uint16 NR51 = 0xFF25; // Selection of Sound output terminal
+	constexpr uint16 NR52 = 0xFF26; // Sound on/off
+	
+	// Wave RAM (Channel 3)
+	constexpr uint16 WAVE_RAM_BEGIN = 0xFF30;
+	constexpr uint16 WAVE_RAM_END = 0xFF40;
 }
 
 UENUM(BlueprintType)

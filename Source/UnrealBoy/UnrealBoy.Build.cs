@@ -42,6 +42,8 @@ public class UnrealBoy : ModuleRules
 				"UMG",
 				// ... add private dependencies that you statically link with here ...	
 				"Projects",
+				"AudioMixer",
+				"AudioPlatformConfiguration",
 			}
 			);
 		
